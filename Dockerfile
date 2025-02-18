@@ -6,4 +6,4 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY hub.py hub.py
 
-CMD ["python3", "hub.py"]
+CMD ["python3", "-u", "hub.py"]
