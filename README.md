@@ -1,6 +1,6 @@
 # iot-hub
 
-IoT hub for collecting and sending data to cloud.
+IoT hub for collecting, storing and sending data to cloud.
 Goal is to make it easy to setup and use.
 
 TODO:
