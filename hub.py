@@ -1,4 +1,5 @@
 import paho.mqtt.client as mqtt
+import psycopg2
 import time
 
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -15,7 +16,9 @@ mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 mqttc.on_connect = on_connect
 mqttc.on_message = on_message
 
-mqttc.connect("iot-hub-mosquitto-1", 1883, 60)
+mqttc.connect("broker", 1883, 60)
 mqttc.subscribe("pico/sensor/distance")
+
+conn = psycopg2.connect("dbname=db user=db_admin password=1234 host=db port=5432")
 
 mqttc.loop_forever()
