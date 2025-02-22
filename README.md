@@ -24,3 +24,14 @@ TODO:
 ```
 ./exec_db.sh
 ```
+
+```mermaid
+graph LR
+    E[Edge] --> |pub: sensor/distance|B
+    subgraph Fog["Fog iot-hub"]
+        B[MQTT-Broker] -.-> A[Hub Subscriber] --> DB[(Hub DB)]
+        A[Hub Subscriber] --> |sub: sensor/distance|B[MQTT-Broker]
+        DB[(Hub DB)] -.-> A[Hub Subscriber]
+    end
+    A[Hub Subscriber] --> |HTTP POST|C[Cloud]
+```
