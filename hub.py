@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 import psycopg2
 import time
+import requests
 
 def on_connect(client, userdata, flags, reason_code, properties):
     if reason_code.is_failure:
@@ -19,8 +20,22 @@ def on_message(client, userdata, msg):
         conn.commit()
 
         print(f"stored in db: {data}")
+
+        send_to_cloud('/post/device', data)
     except Exception as e:
         print(f"error on_message: {e}")
+
+def calc_avg():
+    return avg;
+
+def send_to_cloud(path, data):
+    url = 'http://192.168.1.13:9090/api' + path
+    headers = {'Content-Type': 'application/json'}
+    json_data = {'name': data}
+
+    r = requests.post(url, headers=headers, json=json_data)
+
+    return 1
 
 mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 mqttc.on_connect = on_connect
