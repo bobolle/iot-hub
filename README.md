@@ -8,8 +8,19 @@ TODO:
 - [x] Check so it works with pico-w but i cba because mqtt with lwip is dogshit
 - [ ] Create working healthchecks
 - [ ] Auth for mqtt broker
+- [x] HTTP requests to cloud
 
 ## Start hub
 ```
 ./docker.sh
+```
+
+## Cleanup
+```
+./clean.sh
+```
+
+## PSQL in DB
+```
+./exec_db.sh
 ```
