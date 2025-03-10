@@ -35,3 +35,11 @@ graph LR
     end
     A[Hub Subscriber] --> |HTTP POST|C[Cloud]
 ```
+
+# iot-hub-pi-zero-2-w
+
+## developing section for the hub on the zero 2 W
+
+Things to figure out:
+- What's the best developing practices when developing against a pi?
+- How to make the installation as simple as before?
