@@ -8,7 +8,7 @@ def on_connect(client, userdata, flags, result_code, properties):
         print(f"connection to mqtt-broker returned with result code {result_code}")
     else:
         print(f"connected to mqtt-broker")
-        mqttc.subscribe("pico/sensor/distance")
+        mqtt_client.subscribe("pico/sensor/distance")
         # send device_id to cloud in order to manage connection
 
 def on_disconnect(client, userdata, result_code):
@@ -43,12 +43,12 @@ def send_to_cloud(path, data):
     r = requests.post(url, headers=headers, json=json_data)
     return r
 
-mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-mqttc.on_connect = on_connect
-mqttc.on_message = on_message
+mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+mqtt_client.on_connect = on_connect
+mqtt_client.on_message = on_message
 
-mqttc.connect("broker", 1883, 60)
+mqtt_client.connect("broker", 1883, 60)
 
 conn = psycopg2.connect("dbname=db user=db_admin password=1234 host=db port=5432")
 
-mqttc.loop_forever()
+mqtt_client.loop_forever()
