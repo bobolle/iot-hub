@@ -43,3 +43,8 @@ graph LR
 Things to figure out:
 - What's the best developing practices when developing against a pi?
 - How to make the installation as simple as before?
+
+## Installation on pi zero 2 w
+```
+./install-pi.sh
+```
