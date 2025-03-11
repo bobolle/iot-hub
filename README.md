@@ -51,3 +51,9 @@ python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
 ```
+
+TODO:
+- [x] mosquitto working connection
+- [ ] postgresql working connection
+- [ ] edge-device working connection
+
