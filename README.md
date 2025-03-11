@@ -46,6 +46,7 @@ Things to figure out:
 
 ## Installation on pi zero 2 w
 ```
+./build.sh
 python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
