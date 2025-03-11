@@ -46,14 +46,19 @@ Things to figure out:
 
 ## Installation on pi zero 2 w
 ```
-./build.sh
+sudo ./build.sh
 python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
 ```
 
+## Start hub on pi zero 2 w
+```
+python3 ./src/hub.py
+```
+
 TODO:
 - [x] mosquitto working connection
-- [ ] postgresql working connection
+- [x] postgresql working connection
 - [ ] edge-device working connection
 
