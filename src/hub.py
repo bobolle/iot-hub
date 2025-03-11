@@ -15,19 +15,20 @@ def on_disconnect(client, userdata, result_code):
     print(f"disconnected with result code {result_code}")
 
 def on_message(client, userdata, msg):
-    try:
-        data = msg.payload.decode()
-        print(f"message received: {data}")
+    #try:
+    #    data = msg.payload.decode()
+    #    print(f"message received: {data}")
 
-        cur = conn.cursor()
-        sql = f"INSERT INTO device (name) VALUES ('{data}')"
-        cur.execute(sql)
-        conn.commit()
+    #    cur = conn.cursor()
+    #    sql = f"INSERT INTO device (name) VALUES ('{data}')"
+    #    cur.execute(sql)
+    #    conn.commit()
 
-        send_to_cloud('/post/device', data)
+    #    send_to_cloud('/post/device', data)
 
-    except Exception as e:
-        print(f"error on_message: {e}")
+    #except Exception as e:
+    #    print(f"error on_message: {e}")
+    pass
 
 def calc_avg():
     return avg;
@@ -47,8 +48,8 @@ mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 mqtt_client.on_connect = on_connect
 mqtt_client.on_message = on_message
 
-mqtt_client.connect("broker", 1883, 60)
+mqtt_client.connect("localhost", 1883, 60)
 
-conn = psycopg2.connect("dbname=db user=db_admin password=1234 host=db port=5432")
+#conn = psycopg2.connect("dbname=db user=db_admin password=1234 host=localhost port=5432")
 
 mqtt_client.loop_forever()
