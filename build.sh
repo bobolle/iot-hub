@@ -1,15 +1,26 @@
 #!/bin/bash
 
-DB_USER="db_admin"
-DB_PASS="1234"
-DB_NAME="db"
+if [ "$#" -lt 3 ]; then
+    echo "Invalid format: $0 <db_name> <db_user> <db_pass>"
+    exit 1
+fi
 
-PACKAGES="python3 python3-pip python3-venv mosquitto mosquitto-clients postgresql" &&
-apt-get install $PACKAGES -y &&
-mv ./mosquitto.conf /etc/mosquitto/mosquitto.conf &&
-systemctl start mosquitto.service &&
-sudo -u postgres psql <<EOF
-CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';
-CREATE DATABASE $DB_NAME WITH OWNER '$DB_USER';
+
+if [ "$#" = 3 ]; then
+
+    DB_NAME=$1
+    DB_USER=$2
+    DB_PASS=$3
+    PACKAGES="python3 python3-pip python3-venv mosquitto mosquitto-clients postgresql"
+
+    apt-get install $PACKAGES -y &&
+    cp ./mosquitto.conf /etc/mosquitto/mosquitto.conf &&
+    systemctl start mosquitto.service &&
+    systemctl start postgresql.service &&
+    { sudo -u postgres psql <<EOF
+        CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';
+        CREATE DATABASE $DB_NAME WITH OWNER '$DB_USER'; 
+        GRANT ALL PRIVILEGES ON DATABASE $DB_NAME to $DB_USER;
 EOF
-echo "User '$DB_USER' and database '$DB_NAME' created successfully."
+    } && echo "Done"
+fi
