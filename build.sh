@@ -1,10 +1,11 @@
 #!/bin/bash
 
 if [ "$#" -lt 3 ]; then
-    echo "Invalid format: $0 <db_name> <db_user> <db_pass>"
+    echo "Invalid format: example $0 <db_name> <db_user> <db_pass>"
     exit 1
 fi
 
+echo "Building iot-hub ..."
 
 if [ "$#" = 3 ]; then
 
