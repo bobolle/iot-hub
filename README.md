@@ -60,5 +60,5 @@ python3 ./src/hub.py
 TODO:
 - [x] mosquitto working connection
 - [x] postgresql working connection
-- [ ] edge-device working connection
+- [x] edge-device working connection
 
