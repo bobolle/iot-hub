@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 import psycopg2
 import time
+import json
 import requests
 
 def on_connect(client, userdata, flags, result_code, properties):
@@ -16,15 +17,15 @@ def on_disconnect(client, userdata, result_code):
 
 def on_message(client, userdata, msg):
     try:
-        data = msg.payload.decode()
-        print(f"message received: {data}")
+        payload = json.loads(msg.payload.decode())
+        print(f"message received: {payload}")
 
-        cur = conn.cursor()
-        sql = f"INSERT INTO device (name) VALUES ('{data}')"
-        cur.execute(sql)
-        conn.commit()
+        #cur = conn.cursor()
+        #sql = f"INSERT INTO device (name) VALUES ('{data}')"
+        #cur.execute(sql)
+        #conn.commit()
 
-        send_to_cloud('/post/device', data)
+        #send_to_cloud('/post/device', data)
 
     except Exception as e:
         print(f"error on_message: {e}")
