@@ -21,11 +21,11 @@ def on_message(client, userdata, msg):
         print(f"message received: {payload}")
 
         #cur = conn.cursor()
-        #sql = f"INSERT INTO device (name) VALUES ('{data}')"
+        #sql = f"INSERT INTO device (name) VALUES ('{payload}')"
         #cur.execute(sql)
         #conn.commit()
 
-        #send_to_cloud('/post/device', data)
+        send_to_cloud('/data', payload)
 
     except Exception as e:
         print(f"error on_message: {e}")
@@ -40,7 +40,7 @@ def disconnect_device(client, device_id):
 def send_to_cloud(path, data):
     url = 'http://192.168.1.13:9090/api' + path
     headers = {'Content-Type': 'application/json'}
-    json_data = {'name': data}
+    json_data = data
 
     r = requests.post(url, headers=headers, json=json_data)
     return r
