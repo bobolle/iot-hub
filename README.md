@@ -61,4 +61,7 @@ TODO:
 - [x] mosquitto working connection
 - [x] postgresql working connection
 - [x] edge-device working connection
+- [ ] client handling
+- [ ] restart retry
+- [ ] init correct table structures
 
