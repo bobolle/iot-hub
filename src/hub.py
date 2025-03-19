@@ -14,6 +14,7 @@ def on_connect(client, userdata, flags, result_code, properties):
 
 def on_disconnect(client, userdata, result_code):
     print(f"disconnected with result code {result_code}")
+    retry_connection()
 
 def on_message(client, userdata, msg):
     try:
@@ -45,12 +46,30 @@ def send_to_cloud(path, data):
     r = requests.post(url, headers=headers, json=json_data)
     return r
 
+def retry_connection():
+    while True:
+        try:
+            mqtt_client.connect("localhost", 1883, 60)
+            mqtt_client.loop_forever()
+            break
+        except Exception as e:
+            print(f"reconnection to broker failed")
+            time.sleep(5)
+
 mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 mqtt_client.on_connect = on_connect
 mqtt_client.on_message = on_message
 
-mqtt_client.connect("localhost", 1883, 60)
+try:
+    conn = psycopg2.connect("dbname=db user=db_admin password=1234 host=localhost port=5432")
+    print("init connection to db established")
+except Exception as e:
+    print(f"init connection to db failed: {e}")
 
-conn = psycopg2.connect("dbname=db user=db_admin password=1234 host=localhost port=5432")
+try:
+    mqtt_client.connect("localhost", 1883, 60)
+    mqtt_client.loop_forever()
+except Exception as e:
+    print(f"init connection to broker failed: {e}")
+    retry_connection()
 
-mqtt_client.loop_forever()
