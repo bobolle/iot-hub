@@ -18,7 +18,11 @@ def on_connect(client, userdata, flags, result_code, properties):
         print(f"connection to mqtt-broker returned with result code {result_code}")
     else:
         print(f"connected to mqtt-broker")
-        mqtt_client.subscribe("pico/sensor/distance")
+        
+        # check if db contains topics to be subscribed to
+
+        client.subscribe("edge/+/sensors/distance")
+
         # send device_id to cloud in order to manage connection
 
 def on_disconnect(client, userdata, result_code):
@@ -27,6 +31,11 @@ def on_disconnect(client, userdata, result_code):
 
 def on_message(client, userdata, msg):
     try:
+        topic = msg.topic
+        topic_arr = topic.split('/')
+        device_id = topic_arr[1]
+        print(device_id)
+
         payload = json.loads(msg.payload.decode())
         print(f"message received: {payload}")
 
