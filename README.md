@@ -62,7 +62,7 @@ TODO:
 - [x] postgresql working connection
 - [x] edge-device working connection
 - [ ] client handling
-- [ ] restart retry
+- [x] restart retry
 - [ ] init correct table structures
 - [ ] create modules
 - [ ] heartbeat
