@@ -24,27 +24,34 @@ def on_connect(client, userdata, flags, result_code, properties):
 
         client.subscribe("edge/+/sensors/distance")
 
-        # send device_id to cloud in order to manage connection
-
 def on_disconnect(client, userdata, result_code):
     print(f"disconnected with result code {result_code}")
     retry_connection()
 
 def on_message(client, userdata, msg):
-    try:
-        topic = msg.topic
-        topic_arr = topic.split('/')
-        device_id = topic_arr[1]
-        payload = json.loads(msg.payload.decode())
+    topic = msg.topic
+    topic_arr = topic.split('/')
+    device_id = topic_arr[1]
 
+    debug_print(device_id)
+
+    try:
+        # store device in db
+        # send device_id to cloud in order to manage connection
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO device (id) VALUES (%s)", (device_id,))
+        conn.commit()
+    except Exception as e:
+        debug_print(f"error inserting device: {e}");
+        conn.rollback()
+
+    try:
+        payload = json.loads(msg.payload.decode())
         print(f"message received: {payload}")
-        debug_print(device_id)
 
         send_to_cloud('/data', payload)
-
     except Exception as e:
         debug_print(f"error on_message: {e}")
-    pass
 
 def disconnect_device(client, device_id):
     client.publish(f"edge-device/{device-id}/disconnect", "1")
