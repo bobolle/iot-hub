@@ -3,6 +3,7 @@ import psycopg2
 import time
 import json
 import requests
+import argparse
 
 BROKER_ADDRESS = "localhost"
 BROKER_PORT = 1883
@@ -34,15 +35,15 @@ def on_message(client, userdata, msg):
         topic = msg.topic
         topic_arr = topic.split('/')
         device_id = topic_arr[1]
-        print(device_id)
-
         payload = json.loads(msg.payload.decode())
+
         print(f"message received: {payload}")
+        debug_print(device_id)
 
         send_to_cloud('/data', payload)
 
     except Exception as e:
-        print(f"error on_message: {e}")
+        debug_print(f"error on_message: {e}")
     pass
 
 def disconnect_device(client, device_id):
@@ -56,7 +57,7 @@ def send_to_cloud(path, data):
     try: 
         r = requests.post(url, headers=headers, json=json_data)
     except Exception as e:
-        print(f"sending to cloud failed: {e}")
+        debug_print(f"sending to cloud failed: {e}")
 
 def retry_connection():
     while True:
@@ -68,26 +69,35 @@ def retry_connection():
             print(f"reconnection to broker failed")
             time.sleep(5)
 
-mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-mqtt_client.on_connect = on_connect
-mqtt_client.on_message = on_message
+def debug_print(msg):
+    if args.debug:
+        print(f"DEBUG: {msg}")
 
-try:
-    conn = psycopg2.connect(f"dbname={DB_NAME} user={DB_USER} password={DB_PASS} host={DB_HOST} port={DB_PORT}")
-    print("init connection to db established")
-except Exception as e:
-    print(f"init connection to db failed: {e}")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--debug", action="store_true", help="Enable debug mode")
+    args = parser.parse_args()
 
-try:
-    mqtt_client.connect(BROKER_ADDRESS, BROKER_PORT, 60)
-    mqtt_client.loop_start()
-except Exception as e:
-    print(f"init connection to broker failed: {e}")
-    retry_connection()
+    mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    mqtt_client.on_connect = on_connect
+    mqtt_client.on_message = on_message
 
-try:
-    while True:
-        time.sleep(1)
-except KeyboardInterrupt:
-    mqtt_client.loop_stop()
-    mqtt_client.disconnect()
+    try:
+        conn = psycopg2.connect(f"dbname={DB_NAME} user={DB_USER} password={DB_PASS} host={DB_HOST} port={DB_PORT}")
+        print("init connection to db established")
+    except Exception as e:
+        print(f"init connection to db failed: {e}")
+
+    try:
+        mqtt_client.connect(BROKER_ADDRESS, BROKER_PORT, 60)
+        mqtt_client.loop_start()
+    except Exception as e:
+        print(f"init connection to broker failed: {e}")
+        retry_connection()
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        mqtt_client.loop_stop()
+        mqtt_client.disconnect()
