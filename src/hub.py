@@ -4,6 +4,15 @@ import time
 import json
 import requests
 
+BROKER_ADDRESS = "localhost"
+BROKER_PORT = 1883
+
+DB_NAME = "db"
+DB_USER = "db_admin"
+DB_PASS = "1234"
+DB_HOST = "localhost"
+DB_PORT = 5432
+
 def on_connect(client, userdata, flags, result_code, properties):
     if result_code.is_failure:
         print(f"connection to mqtt-broker returned with result code {result_code}")
@@ -21,19 +30,11 @@ def on_message(client, userdata, msg):
         payload = json.loads(msg.payload.decode())
         print(f"message received: {payload}")
 
-        #cur = conn.cursor()
-        #sql = f"INSERT INTO device (name) VALUES ('{payload}')"
-        #cur.execute(sql)
-        #conn.commit()
-
         send_to_cloud('/data', payload)
 
     except Exception as e:
         print(f"error on_message: {e}")
     pass
-
-def calc_avg():
-    return avg;
 
 def disconnect_device(client, device_id):
     client.publish(f"edge-device/{device-id}/disconnect", "1")
@@ -43,14 +44,16 @@ def send_to_cloud(path, data):
     headers = {'Content-Type': 'application/json'}
     json_data = data
 
-    r = requests.post(url, headers=headers, json=json_data)
-    return r
+    try: 
+        r = requests.post(url, headers=headers, json=json_data)
+    except Exception as e:
+        print(f"sending to cloud failed: {e}")
 
 def retry_connection():
     while True:
         try:
-            mqtt_client.connect("localhost", 1883, 60)
-            mqtt_client.loop_forever()
+            mqtt_client.connect(BROKER_ADDRESS, BROKER_PORT, 60)
+            mqtt_client.loop_start()
             break
         except Exception as e:
             print(f"reconnection to broker failed")
@@ -61,15 +64,21 @@ mqtt_client.on_connect = on_connect
 mqtt_client.on_message = on_message
 
 try:
-    conn = psycopg2.connect("dbname=db user=db_admin password=1234 host=localhost port=5432")
+    conn = psycopg2.connect(f"dbname={DB_NAME} user={DB_USER} password={DB_PASS} host={DB_HOST} port={DB_PORT}")
     print("init connection to db established")
 except Exception as e:
     print(f"init connection to db failed: {e}")
 
 try:
-    mqtt_client.connect("localhost", 1883, 60)
-    mqtt_client.loop_forever()
+    mqtt_client.connect(BROKER_ADDRESS, BROKER_PORT, 60)
+    mqtt_client.loop_start()
 except Exception as e:
     print(f"init connection to broker failed: {e}")
     retry_connection()
 
+try:
+    while True:
+        time.sleep(1)
+except KeyboardInterrupt:
+    mqtt_client.loop_stop()
+    mqtt_client.disconnect()
