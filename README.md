@@ -64,6 +64,6 @@ TODO:
 - [ ] client handling
 - [x] restart retry
 - [ ] init correct table structures
-- [ ] create modules
+- [x] create modules
 - [ ] heartbeat
 
