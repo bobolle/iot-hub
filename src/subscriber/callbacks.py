@@ -9,7 +9,15 @@ def on_message(client, userdata, msg):
 
     device_type = topics[0]
     device_id = topics[1]
+    
+    json_object = json.loads(msg.payload.decode('utf-8'))
 
+    payload = {
+            'device_id': device_id,
+            'data': json_object['value'],
+            'timestamp': ''
+    }
+    
     #create funciton for sending data to db
 
     #try:
@@ -19,5 +27,4 @@ def on_message(client, userdata, msg):
     #except Exception as e:
     #    print(f"error: on_message, {e}")
 
-    #payload = json.loads(msg.payload.decode())
-    send_to_cloud('/data', msg.payload)
+    send_to_cloud('/data', json.dumps(payload))
