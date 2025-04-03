@@ -5,7 +5,7 @@ Goal is to make it easy to setup and use.
 
 TODO:
 - [x] Store data on postgresql
-- [x] Check so it works with pico-w but i cba because mqtt with lwip is dogshit
+- [x] Check so it works with pico-w
 - [ ] Create working healthchecks
 - [ ] Auth for mqtt broker
 - [x] HTTP requests to cloud
