@@ -2,7 +2,7 @@ import json
 from cloud.sender import send_to_cloud
 
 def on_connect(client, userdata, flags, result_code, properties):
-    client.subscribe("edge/+/sensors/distance")
+    client.subscribe("edge/+/sensors/light")
 
 def on_message(client, userdata, msg):
     topics = msg.topic.split('/')
